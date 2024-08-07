@@ -1,0 +1,84 @@
+% Players
+role(green). role(blue).
+
+% Theme
+theme(red). theme(black).
+
+% Cards
+red(red_one). red(red_two). red(red_three).
+black(black_one). black(black_two). black(black_three).
+card(C) :- red(C).
+card(C) :- black(C).
+
+% Set the theme
+init(theme_set_phase).
+
+legal(P,noop) :- true(theme_set_phase),role(P),distinct(P,random).
+legal(random,set_theme(T)) :- true(theme_set_phase),theme(T).
+
+next(theme_card(C)) :- does(random,set_theme(red)),red(C).
+next(theme_card(C)) :- does(random,set_theme(black)),black(C).
+next(theme_card(C)) :- true(theme_card(C)).
+
+next(distribute_phase_one) :- true(theme_set_phase).
+next(distribute_phase) :- true(theme_set_phase).
+
+% Distribute the cards
+legal(P,noop) :- true(distribute_phase),role(P),distinct(P,random).
+legal(random,distribute(A,B)) :- true(distribute_phase),card(A),card(B),distinct(A,B),
+                                    not distributed(A),not distributed(B).
+
+sees(green,owned_card(green,A)) :- does(random,distribute(A,B)).
+sees(blue,owned_card(blue,B)) :- does(random,distribute(A,B)).
+
+next(distributed(A)) :- does(random,distribute(A,B)).
+next(distributed(B)) :- does(random,distribute(A,B)).
+next(distributed(A)) :- true(distributed(A)).
+
+next(owned_card(green,A)) :- does(random,distribute(A,B)).
+next(owned_card(blue,B)) :- does(random,distribute(A,B)).
+next(owned_card(P,A)) :- true(distribute_phase),true(owned_card(P,A)).
+
+next(distribute_phase_two) :- true(distribute_phase_one).
+next(distribute_phase) :- true(distribute_phase_one).
+
+next(distribute_phase_three) :- true(distribute_phase_two).
+next(distribute_phase) :- true(distribute_phase_two).
+
+next(green_phase) :- true(distribute_phase_three).
+
+% Player 1 (green) turn
+legal(random,noop) :- not true(distribute_phase),not true(theme_set_phase).
+legal(blue,noop) :- true(green_phase).
+
+legal(green,put(C)) :- true(green_phase),owned_card(green,C).
+legal(green,doubt) :- true(green_phase),true(stacked_card(C)).
+
+next(owned_card(P,C)) :- true(owned_card(P,C)),not does(P,put(C)).
+next(stacked_card(C)) :- does(P,put(C)).
+next(stacked_card(C)) :- true(stacked_card(C)),does(P,put(D)).
+next(top_card(C)) :- does(P,put(C)).
+
+% Succesful doubt
+next(owned_card(R,C)) :- does(P,doubt),role(R),distinct(P,R),
+                        stacked_card(C),top_card(D),not theme_card(D).
+
+% Failed doubt
+next(owned_card(P,C)) :- does(P,doubt),
+                        stacked_card(C),top_card(D),theme_card(D).
+
+next(blue_phase) :- true(green_phase).
+
+% Player 2 (blue) turn
+legal(green,noop) :- true(blue_phase).
+legal(blue,put(C)) :- true(blue_phase),owned_card(blue,C).
+legal(blue,doubt) :- true(blue_phase),true(stacked_card(C)).
+
+next(green_phase) :- true(blue_phase).
+
+% Terminal
+terminal :- not owned_card(green,C).
+terminal :- not owned_card(blue,C).
+
+goal(P,100) :- not owned_card(P,C).
+goal(R,0) :- not owned_card(P,C),role(R),distinct(P,R).

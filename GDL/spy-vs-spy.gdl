@@ -1,0 +1,43 @@
+% Players
+role(observer). role(cutter).
+
+% Wires
+wire(red). wire(blue).
+
+% Decide which wire must be cut
+init(setup).
+
+legal(P, noop) :- true(setup), role(P), distinct(P, random)
+legal(random, assign(W)) :- true(setup), wire(W)
+
+next(assigned(W)) :- does(random, assign(W))
+next(assigned(W)) :- true(assigned(W))
+
+sees(observer, wire_to_cut(W)) :- does(random, assign(W))
+
+% The observer makes a claim
+next(claim_phase) :- true(setup)
+
+legal(P, noop) :- true(claim_phase), role(P), distinct(P, observer)
+legal(observer, claim_must_cut(W)) :- true(claim_phase), wire(W)
+
+sees(cutter, claim(observer, true(assigned(W)))) :-
+    does(observer, claim_must_cut(W))
+
+% The cutter chooses a wire to cut
+next(cut_phase) :- true(claim_phase)
+
+legal(P, noop) :- true(cut_phase), role(P), distinct(P, cutter)
+legal(cutter, cut(W)) :- true(cut_phase), wire(W)
+
+next(was_cut(W)) :- does(cutter, cut(W))
+
+% Termination
+terminal :- true(was_cut(W))
+
+% Reward
+goal(observer, 0) :- true(was_cut(W)), true(assigned(W))
+goal(observer, 100) :- true(was_cut(W)), not true(assigned(W))
+
+goal(cutter, 100) :- true(was_cut(W)), true(assigned(W))
+goal(cutter, 0) :- true(was_cut(W)), not true(assigned(W))

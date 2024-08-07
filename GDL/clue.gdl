@@ -1,0 +1,89 @@
+% Players
+role(black). role(white).
+
+% Cards
+card(candlestick). card(dagger). card(pipe). card(revolver). card(rope).
+
+% Set the hidden card
+init(hidden_card_phase).
+
+legal(P,noop) :- true(hidden_card_phase), role(P), distinct(P,random).
+legal(random,hide_card(C)) :- true(hidden_card_phase), card(C).
+
+next(hidden_card(C)) :- does(random,hide_card(C)).
+next(hidden_card(C)) :- true(hidden_card(C)).
+
+next(distribute_phase_one) :- true(hidden_card_phase).
+next(distribute_phase) :- true(hidden_card_phase).
+
+% Distribute the cards
+legal(P, noop) :- true(distribute_phase), role(P), distinct(P, random).
+legal(random, distribute(A,B)) :- true(distribute_phase), card(A), card(B), distinct(A,B),
+                                    not hidden_card(A), not hidden_card(B),
+                                    not distributed(A), not distributed(B).
+
+sees(black, owned_card(black, A)) :- does(random, distribute(A, B)).
+sees(white, owned_card(white, B)) :- does(random, distribute(A, B)).
+
+next(distributed(A)) :- does(random, distribute(A, B)).
+next(distributed(B)) :- does(random, distribute(A, B)).
+next(distributed(A)) :- true(distributed(A)).
+
+next(owned_card(black, A)) :- does(random, distribute(A, B)).
+next(owned_card(white, B)) :- does(random, distribute(A, B)).
+next(owned_card(P, A)) :- true(owned_card(P, A)).
+
+next(distribute_phase_two) :- true(distribute_phase_one).
+next(distribute_phase) :- true(distribute_phase_one).
+
+next(black_suggest_phase) :- true(distribute_phase_two).
+next(black_phase) :- true(distribute_phase_two).
+
+% Every player can see others move
+sees(P, move(Q, M)) :- role(P), does(Q, M).
+
+% Player 1 (black) suggest phase
+legal(random, noop) :- not true(distribute_phase), not true(hidden_card_phase).
+legal(white, noop) :- true(black_phase).
+
+legal(black, suggest(C)) :- true(black_suggest_phase), card(C).
+
+sees(black, owned_card(white, C)) :- does(black, suggest(C)), owned_card(white, C).
+
+next(black_guess_phase) :- true(black_suggest_phase).
+next(black_phase) :- true(black_suggest_phase).
+
+% Player 1 (black) guess phase
+legal(black, guess(C)) :- true(black_guess_phase), card(C).
+legal(black, noop) :- true(black_guess_phase).
+
+next(guessed(P, C)) :- role(P), does(P, guess(C)).
+
+next(white_suggest_phase) :- true(black_guess_phase).
+next(white_phase) :- true(black_guess_phase).
+
+% Player 2 (white) suggest phase
+legal(black, noop) :- true(white_phase).
+
+legal(white, suggest(C)) :- true(white_suggest_phase), card(C).
+
+sees(white, owned_card(black, C)) :- does(white, suggest(C)), owned_card(black, C).
+
+next(white_guess_phase) :- true(white_suggest_phase).
+next(white_phase) :- true(white_suggest_phase).
+
+% Player 2 (white) guess phase
+legal(white, guess(C)) :- true(white_guess_phase), card(C).
+legal(white, noop) :- true(white_guess_phase).
+
+next(black_suggest_phase) :- true(black_guess_phase).
+next(black_phase) :- true(black_guess_phase).
+
+% Terminal
+terminal :- true(guessed(P, C)).
+
+goal(P, 100) :- guessed(P, C), hidden_card(C).
+goal(P, 0) :- guessed(P, C), not hidden_card(C).
+
+goal(R, 100) :- guessed(P, C), not hidden_card(C), role(R), distinct(P, R).
+goal(R, 0) :- guessed(P, C), hidden_card(C), role(R), distinct(P, R).

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BluffingGGP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bcebdaa2a6c566f2a47bf27e76c0f3a1d64389d3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1b1926a1022e1acdf83c3cb16eba1b7aae8b4ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("BluffingGGP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BluffingGGP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

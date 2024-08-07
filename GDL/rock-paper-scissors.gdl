@@ -1,0 +1,46 @@
+% Players
+role(black). role(white).
+
+% Shapes
+shapes(rock). shapes(paper). shapes(scissors).
+
+% Set random to always play noop
+legal(random, noop).
+
+% Player 1 (black) will make an announcement about his shapes
+init(announce_phase).
+
+legal(white, noop) :- true(announce_phase).
+legal(black, claim_play(S)) :- true(announce_phase), shapes(S).
+
+sees(white, claim(black, true(choice(black, S)))) :- does(black, claim_play(S)).
+
+% Player 1 (black) and Player 2 (white) alternately make their choice
+next(black_phase) :- true(announce_phase).
+
+legal(black, play(S)) :- true(black_phase), shapes(S).
+legal(white, noop) :- true(black_phase).
+
+next(white_phase) :- true(black_phase).
+
+legal(black, noop) :- true(white_phase).
+legal(white, play(S)) :- true(white_phase), shapes(S).
+
+next(choice(P, S)) :- does(P, play(S)), role(P).
+next(choice(P, S)) :- true(choice(P, S)).
+
+% Termination
+terminal :- true(choice(white, S)), true(choice(black, T)).
+
+% Reward
+goal(P, 100) :- true(choice(P, rock)), true(choice(R, scissors)).
+goal(R, 0) :- true(choice(P, rock)), true(choice(R, scissors)).
+
+goal(P, 100) :- true(choice(P, paper)), true(choice(R, rock)).
+goal(R, 0) :- true(choice(P, paper)), true(choice(R, rock)).
+
+goal(P, 100) :- true(choice(P, scissors)), true(choice(R, paper)).
+goal(R, 0) :- true(choice(P, scissors)), true(choice(R, paper)).
+
+goal(black, 0) :- true(choice(black, S)), true(choice(white, S)).
+goal(white, 0) :- true(choice(black, S)), true(choice(white, S)).

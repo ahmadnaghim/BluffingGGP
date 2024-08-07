@@ -1,0 +1,48 @@
+% Players
+role(husband). role(wife).
+
+% Shows
+show(football). show(theatre).
+
+% All possible moves
+input(P, choose(S)) :- role(P), distinct(P, random), show(S).
+input(husband, claim_choice(S)) :- show(S).
+input(random, noop).
+
+% Set random to always play noop
+legal(random, noop).
+
+% Husband will make an announcement about his choice
+init(announce_phase).
+
+legal(wife, noop) :- true(announce_phase).
+legal(husband, claim_choice(S)) :- true(announce_phase), show(S).
+
+sees(wife, claim(husband, true(choice(husband, S)))) :- does(husband, claim_choice(S)).
+
+% Husband and wife alternately make their choice
+next(husband_phase) :- true(announce_phase).
+
+legal(husband, choose(S)) :- true(husband_phase), show(S).
+legal(wife, noop) :- true(husband_phase).
+
+next(wife_phase) :- true(husband_phase).
+
+legal(husband, noop) :- true(wife_phase).
+legal(wife, choose(S)) :- true(wife_phase), show(S).
+
+next(choice(P, S)) :- does(P, choose(S)), role(P).
+next(choice(P, S)) :- true(choice(P, S)).
+
+% Termination
+terminal :- true(choice(wife, S)), true(choice(husband, T)).
+
+% Reward
+goal(husband, 100) :- true(choice(husband, football)), true(choice(wife, football)).
+goal(wife, 50) :- true(choice(husband, football)), true(choice(wife, football)).
+
+goal(husband, 50) :- true(choice(husband, theatre)), true(choice(wife, theatre)).
+goal(wife, 100) :- true(choice(husband, theatre)), true(choice(wife, theatre)).
+
+goal(husband, 0) :- true(choice(husband, S)), true(choice(wife, T)), distinct(S, T).
+goal(wife, 0) :- true(choice(husband, S)), true(choice(wife, T)), distinct(S, T).
