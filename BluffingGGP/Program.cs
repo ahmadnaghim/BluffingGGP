@@ -65,24 +65,24 @@ namespace GamePlayer
 
         static void EvaluateBattleOfTheSexesGame(int numberOfRuns)
         {
-            var game = new BattleOfTheSexesModifiedGame();
+            var game = new BattleOfTheSexesGame();
 
-            var player1 = new IPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>[]
+            var player1 = new IPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>[]
             {
-                new RandomPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new HonestPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new LiarPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new BeliefRevisionPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new ProposedPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
+                new RandomPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new HonestPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new LiarPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new BeliefRevisionPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new ProposedPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
             };
 
-            var player2 = new IPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>[]
+            var player2 = new IPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>[]
             {
-                new RandomPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new HonestPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new LiarPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new BeliefRevisionPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
-                new ProposedPlayer<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGame, BattleOfTheSexesModifiedGameState>(),
+                new RandomPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new HonestPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new LiarPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new BeliefRevisionPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
+                new ProposedPlayer<BattleOfTheSexesGameMove, BattleOfTheSexesGame, BattleOfTheSexesGameState>(),
             };
 
             EvaluateTwoPlayerGame(game, player1, player2, numberOfRuns);

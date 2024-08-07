@@ -4,43 +4,43 @@ using System.Linq;
 
 namespace GamePlayer
 {
-    class BattleOfTheSexesModifiedGame : IGame<BattleOfTheSexesModifiedGameMove, BattleOfTheSexesModifiedGameState>
+    class BattleOfTheSexesGame : IGame<BattleOfTheSexesGameMove, BattleOfTheSexesGameState>
     {
         public int NumberOfPlayers => 2;
 
         public bool IsSpecialGame => true;
 
-        public IEnumerable<(IEnumerable<BattleOfTheSexesModifiedGameMove> combinedMove, BattleOfTheSexesModifiedGameState nextState)> GetHistory(BattleOfTheSexesModifiedGameState state) => state.history;
+        public IEnumerable<(IEnumerable<BattleOfTheSexesGameMove> combinedMove, BattleOfTheSexesGameState nextState)> GetHistory(BattleOfTheSexesGameState state) => state.history;
 
-        public BattleOfTheSexesModifiedGameState GetInitialStateFromCurrent(BattleOfTheSexesModifiedGameState state) => state.initialState;
+        public BattleOfTheSexesGameState GetInitialStateFromCurrent(BattleOfTheSexesGameState state) => state.initialState;
 
-        public IEnumerable<(BattleOfTheSexesModifiedGameState state, int weight, int id)> GetInitialStates() => new[] {
-            (new BattleOfTheSexesModifiedGameState(), 1, 300)
+        public IEnumerable<(BattleOfTheSexesGameState state, int weight, int id)> GetInitialStates() => new[] {
+            (new BattleOfTheSexesGameState(), 1, 300)
         };
 
-        public IEnumerable<(BattleOfTheSexesModifiedGameState state, int weight, int id)> GetSpecialInitialStates() => new[] {
-            (new BattleOfTheSexesModifiedGameState(true, true), 1, 301),
-            (new BattleOfTheSexesModifiedGameState(true, false), 1, 302),
-            (new BattleOfTheSexesModifiedGameState(false, true), 1, 303),
-            (new BattleOfTheSexesModifiedGameState(false, false), 1, 304),
+        public IEnumerable<(BattleOfTheSexesGameState state, int weight, int id)> GetSpecialInitialStates() => new[] {
+            (new BattleOfTheSexesGameState(true, true), 1, 301),
+            (new BattleOfTheSexesGameState(true, false), 1, 302),
+            (new BattleOfTheSexesGameState(false, true), 1, 303),
+            (new BattleOfTheSexesGameState(false, false), 1, 304),
         };
 
-        public IEnumerable<(BattleOfTheSexesModifiedGameState state, int weight, int id)> GetPerceivedInitialStatesFromActual(BattleOfTheSexesModifiedGameState state, int player)
+        public IEnumerable<(BattleOfTheSexesGameState state, int weight, int id)> GetPerceivedInitialStatesFromActual(BattleOfTheSexesGameState state, int player)
             => GetInitialStates();
 
-        public (Func<BattleOfTheSexesModifiedGameState, bool>, int)[] GetPerceptsFromMove(BattleOfTheSexesModifiedGameState state, IEnumerable<BattleOfTheSexesModifiedGameMove> combinedMove)
+        public (Func<BattleOfTheSexesGameState, bool>, int)[] GetPerceptsFromMove(BattleOfTheSexesGameState state, IEnumerable<BattleOfTheSexesGameMove> combinedMove)
         {
             var isTerminal = state.IsTerminal;
             switch (state.Turn)
             {
                 case 1:
                     var moveSeen_1 = state.history.First().move.First();
-                    return new (Func<BattleOfTheSexesModifiedGameState, bool>, int)[] {
+                    return new (Func<BattleOfTheSexesGameState, bool>, int)[] {
                         (state => true, 200),
                         (state => state.history.First().move.First() == moveSeen_1, 203 + moveSeen_1.GetIndex()),
                     };
                 default: 
-                    return new (Func<BattleOfTheSexesModifiedGameState, bool>, int)[] {
+                    return new (Func<BattleOfTheSexesGameState, bool>, int)[] {
                         (state => state.IsTerminal == isTerminal, isTerminal ? 201 : 202),
                         (state => state.IsTerminal == isTerminal, isTerminal ? 201 : 202),
                     };
@@ -48,15 +48,15 @@ namespace GamePlayer
             }
         }
 
-        public BattleOfTheSexesModifiedGameState GetStateAfterCombinedMove(BattleOfTheSexesModifiedGameState state, IEnumerable<BattleOfTheSexesModifiedGameMove> combinedMove) => new BattleOfTheSexesModifiedGameState(state, combinedMove);
+        public BattleOfTheSexesGameState GetStateAfterCombinedMove(BattleOfTheSexesGameState state, IEnumerable<BattleOfTheSexesGameMove> combinedMove) => new BattleOfTheSexesGameState(state, combinedMove);
 
-        public bool IsClaim(BattleOfTheSexesModifiedGameMove move, out int[] receivers, out Func<BattleOfTheSexesModifiedGameState, bool> claim,
-                            out Func<BattleOfTheSexesModifiedGameState, bool> lieClaim, out int id)
+        public bool IsClaim(BattleOfTheSexesGameMove move, out int[] receivers, out Func<BattleOfTheSexesGameState, bool> claim,
+                            out Func<BattleOfTheSexesGameState, bool> lieClaim, out int id)
         {
             switch (move)
             {
                 // Player 1 claiming he will pick football
-                case BattleOfTheSexesModifiedGameMove.CLAIM_FOOTBALL_1:
+                case BattleOfTheSexesGameMove.CLAIM_FOOTBALL_1:
                     receivers = new[] { 1 };
                     claim = state => state.husbandChoice == 0 || state.husbandChoice == -1;
                     lieClaim = state => state.husbandChoice == 1 || state.husbandChoice == -1;
@@ -64,7 +64,7 @@ namespace GamePlayer
                     return true;
 
                 // Player 2 claiming he will pick theatre
-                case BattleOfTheSexesModifiedGameMove.CLAIM_THEATRE_1:
+                case BattleOfTheSexesGameMove.CLAIM_THEATRE_1:
                     receivers = new[] { 1 };
                     claim = state => state.husbandChoice == 1 || state.husbandChoice == -1;
                     lieClaim = state => state.husbandChoice == 0 || state.husbandChoice == -1;
@@ -81,17 +81,17 @@ namespace GamePlayer
         }
     }
 
-    class BattleOfTheSexesModifiedGameState : IGameState<BattleOfTheSexesModifiedGameMove>
+    class BattleOfTheSexesGameState : IGameState<BattleOfTheSexesGameMove>
     {
-        internal readonly BattleOfTheSexesModifiedGameState initialState;
-        internal readonly IEnumerable<(IEnumerable<BattleOfTheSexesModifiedGameMove> move, BattleOfTheSexesModifiedGameState nextState)> history;
+        internal readonly BattleOfTheSexesGameState initialState;
+        internal readonly IEnumerable<(IEnumerable<BattleOfTheSexesGameMove> move, BattleOfTheSexesGameState nextState)> history;
         internal readonly int husbandChoice, wifeChoice;
 
-        internal BattleOfTheSexesModifiedGameState()
+        internal BattleOfTheSexesGameState()
         {
             initialState = this;
 
-            history = Enumerable.Empty<(IEnumerable<BattleOfTheSexesModifiedGameMove> move, BattleOfTheSexesModifiedGameState nextState)>();
+            history = Enumerable.Empty<(IEnumerable<BattleOfTheSexesGameMove> move, BattleOfTheSexesGameState nextState)>();
 
             // Initiate choices to -1 to indicate that no choice has been made yet
             husbandChoice = -1;
@@ -100,11 +100,11 @@ namespace GamePlayer
             LegalMovesByPlayer = CreateLegalMoves();
         }
 
-        internal BattleOfTheSexesModifiedGameState(bool husband, bool wife)
+        internal BattleOfTheSexesGameState(bool husband, bool wife)
         {
             initialState = this;
 
-            history = Enumerable.Empty<(IEnumerable<BattleOfTheSexesModifiedGameMove> move, BattleOfTheSexesModifiedGameState nextState)>();
+            history = Enumerable.Empty<(IEnumerable<BattleOfTheSexesGameMove> move, BattleOfTheSexesGameState nextState)>();
 
             // Initiate choices to -1 to indicate that no choice has been made yet
             husbandChoice = husband ? 0 : 1;
@@ -113,7 +113,7 @@ namespace GamePlayer
             LegalMovesByPlayer = CreateLegalMoves();
         }
 
-        internal BattleOfTheSexesModifiedGameState(BattleOfTheSexesModifiedGameState lastState, IEnumerable<BattleOfTheSexesModifiedGameMove> move)
+        internal BattleOfTheSexesGameState(BattleOfTheSexesGameState lastState, IEnumerable<BattleOfTheSexesGameMove> move)
         {
             initialState = lastState.initialState;
 
@@ -124,14 +124,14 @@ namespace GamePlayer
             // Update the state choices made by the players
             if (Turn == 2)
             {
-                husbandChoice = move.First() == BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL ? 0 : 1;
+                husbandChoice = move.First() == BattleOfTheSexesGameMove.CHOOSE_FOOTBALL ? 0 : 1;
                 wifeChoice = lastState.wifeChoice;
-                //wifeChoice = move.ElementAt(1) == BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL ? 0 : 1;
+                //wifeChoice = move.ElementAt(1) == BattleOfTheSexesGameMove.CHOOSE_FOOTBALL ? 0 : 1;
             }
             else if (Turn == 3)
             {
                 husbandChoice = lastState.husbandChoice;
-                wifeChoice = move.ElementAt(1) == BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL ? 0 : 1;
+                wifeChoice = move.ElementAt(1) == BattleOfTheSexesGameMove.CHOOSE_FOOTBALL ? 0 : 1;
             }
             // Copy the choices from the previous state
             else
@@ -143,29 +143,29 @@ namespace GamePlayer
             LegalMovesByPlayer = CreateLegalMoves();
         }
 
-        public IEnumerable<IEnumerable<BattleOfTheSexesModifiedGameMove>> LegalMovesByPlayer { get; }
+        public IEnumerable<IEnumerable<BattleOfTheSexesGameMove>> LegalMovesByPlayer { get; }
 
-        private IEnumerable<IEnumerable<BattleOfTheSexesModifiedGameMove>> CreateLegalMoves()
+        private IEnumerable<IEnumerable<BattleOfTheSexesGameMove>> CreateLegalMoves()
         {
             return Turn switch
             {
                 // First player claiming what they want to choose in the second turn
                 0 => new[] {
-                        new[] { BattleOfTheSexesModifiedGameMove.CLAIM_FOOTBALL_1, BattleOfTheSexesModifiedGameMove.CLAIM_THEATRE_1 },
-                        new[] { BattleOfTheSexesModifiedGameMove.NO_OP },
+                        new[] { BattleOfTheSexesGameMove.CLAIM_FOOTBALL_1, BattleOfTheSexesGameMove.CLAIM_THEATRE_1 },
+                        new[] { BattleOfTheSexesGameMove.NO_OP },
                     },
                 // Each player choose their preferred option
                 //1 => new[] {
-                //        new[] { BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesModifiedGameMove.CHOOSE_THEATRE },
-                //        new[] { BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesModifiedGameMove.CHOOSE_THEATRE },
+                //        new[] { BattleOfTheSexesGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesGameMove.CHOOSE_THEATRE },
+                //        new[] { BattleOfTheSexesGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesGameMove.CHOOSE_THEATRE },
                 //    },
                 1 => new[] {
-                        new[] { BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesModifiedGameMove.CHOOSE_THEATRE },
-                        new[] { BattleOfTheSexesModifiedGameMove.NO_OP },
+                        new[] { BattleOfTheSexesGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesGameMove.CHOOSE_THEATRE },
+                        new[] { BattleOfTheSexesGameMove.NO_OP },
                     },
                 2 => new[] {
-                        new[] { BattleOfTheSexesModifiedGameMove.NO_OP },
-                        new[] { BattleOfTheSexesModifiedGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesModifiedGameMove.CHOOSE_THEATRE },
+                        new[] { BattleOfTheSexesGameMove.NO_OP },
+                        new[] { BattleOfTheSexesGameMove.CHOOSE_FOOTBALL, BattleOfTheSexesGameMove.CHOOSE_THEATRE },
                     },
                 _ => null,
             };
@@ -187,15 +187,15 @@ namespace GamePlayer
             return "";
         }
 
-        public List<BattleOfTheSexesModifiedGameMove> BluffingMoves(int player)
+        public List<BattleOfTheSexesGameMove> BluffingMoves(int player)
         {
             var legalMoves = LegalMovesByPlayer.ElementAt(player);
             return legalMoves.ToList();
         }
 
-        public bool IsMovePossible(IEnumerable<BattleOfTheSexesModifiedGameMove> combinedMove)
+        public bool IsMovePossible(IEnumerable<BattleOfTheSexesGameMove> combinedMove)
         {
-            var nextState = new BattleOfTheSexesModifiedGameState(this, combinedMove);
+            var nextState = new BattleOfTheSexesGameState(this, combinedMove);
             if (this.husbandChoice == -1 || this.wifeChoice == -1) return true;
             if (nextState.husbandChoice != this.husbandChoice) return false;
             if (nextState.wifeChoice != this.wifeChoice) return false;
@@ -242,7 +242,7 @@ namespace GamePlayer
                 return false;
             }
 
-            var other = (BattleOfTheSexesModifiedGameState)obj;
+            var other = (BattleOfTheSexesGameState)obj;
 
             return Turn == other.Turn
                 && Enumerable
@@ -259,7 +259,7 @@ namespace GamePlayer
 
     }
 
-    enum BattleOfTheSexesModifiedGameMove
+    enum BattleOfTheSexesGameMove
     {
         CLAIM_FOOTBALL_1,
         CLAIM_THEATRE_1,

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ACER\\OneDrive - UNSW\\Research\\Master\\Code\\ZT23-Experimental-Setup-main\\ZT23\\BluffingGGP.csproj",
+      "projectUniqueName": "C:\\Users\\ACER\\OneDrive - UNSW\\Research\\Master\\Code\\ZT23-Experimental-Setup-main\\BluffingGGP\\BluffingGGP.csproj",
       "projectName": "BluffingGGP",
-      "projectPath": "C:\\Users\\ACER\\OneDrive - UNSW\\Research\\Master\\Code\\ZT23-Experimental-Setup-main\\ZT23\\BluffingGGP.csproj",
+      "projectPath": "C:\\Users\\ACER\\OneDrive - UNSW\\Research\\Master\\Code\\ZT23-Experimental-Setup-main\\BluffingGGP\\BluffingGGP.csproj",
       "packagesPath": "C:\\Users\\ACER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ACER\\OneDrive - UNSW\\Research\\Master\\Code\\ZT23-Experimental-Setup-main\\ZT23\\obj\\",
+      "outputPath": "C:\\Users\\ACER\\OneDrive - UNSW\\Research\\Master\\Code\\ZT23-Experimental-Setup-main\\BluffingGGP\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ACER\\AppData\\Roaming\\NuGet\\NuGet.Config",
